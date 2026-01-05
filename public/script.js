@@ -1,0 +1,160 @@
+// グローバル変数
+let wordsData = {
+    adjectives: [],
+    nouns: []
+};
+
+// DOM要素
+const adjectiveElement = document.getElementById('adjective');
+const nounElement = document.getElementById('noun');
+const rerollAdjectiveBtn = document.getElementById('reroll-adjective');
+const rerollNounBtn = document.getElementById('reroll-noun');
+const generateBtn = document.getElementById('generate-btn');
+const loadingElement = document.getElementById('loading');
+const storySection = document.getElementById('story-section');
+const storyElement = document.getElementById('story');
+const errorElement = document.getElementById('error');
+const copyBtn = document.getElementById('copy-btn');
+
+// 初期化
+async function init() {
+    try {
+        const response = await fetch('/api/words');
+        wordsData = await response.json();
+
+        // 初期単語を設定
+        adjectiveElement.textContent = getRandomWord(wordsData.adjectives);
+        nounElement.textContent = getRandomWord(wordsData.nouns);
+    } catch (error) {
+        showError('単語データの読み込みに失敗しました');
+    }
+}
+
+// ランダムな単語を取得
+function getRandomWord(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+// スロットアニメーション
+async function slotAnimation(element, wordArray, duration = 1500) {
+    const btn = element.closest('.word-display').querySelector('.dice-btn');
+    btn.classList.add('rolling');
+    btn.disabled = true;
+
+    const startTime = Date.now();
+    let intervalTime = 50; // 初期スピード
+
+    return new Promise((resolve) => {
+        const interval = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            const progress = elapsed / duration;
+
+            // 徐々に減速
+            if (progress > 0.7) {
+                intervalTime = 150;
+            } else if (progress > 0.5) {
+                intervalTime = 100;
+            }
+
+            // 単語をランダムに変更
+            element.classList.add('slot-animation');
+            element.textContent = getRandomWord(wordArray);
+
+            setTimeout(() => {
+                element.classList.remove('slot-animation');
+            }, 50);
+
+            // 終了判定
+            if (elapsed >= duration) {
+                clearInterval(interval);
+                btn.classList.remove('rolling');
+                btn.disabled = false;
+                resolve();
+            }
+        }, intervalTime);
+    });
+}
+
+// 形容詞の再抽選
+rerollAdjectiveBtn.addEventListener('click', async () => {
+    await slotAnimation(adjectiveElement, wordsData.adjectives);
+});
+
+// 名詞の再抽選
+rerollNounBtn.addEventListener('click', async () => {
+    await slotAnimation(nounElement, wordsData.nouns);
+});
+
+// 小説生成
+generateBtn.addEventListener('click', async () => {
+    const adjective = adjectiveElement.textContent;
+    const noun = nounElement.textContent;
+
+    // UI状態を変更
+    generateBtn.disabled = true;
+    loadingElement.classList.remove('hidden');
+    storySection.classList.add('hidden');
+    errorElement.classList.add('hidden');
+
+    try {
+        const response = await fetch('/api/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ adjective, noun })
+        });
+
+        if (!response.ok) {
+            throw new Error('小説の生成に失敗しました');
+        }
+
+        const data = await response.json();
+
+        // ローディングを非表示
+        loadingElement.classList.add('hidden');
+
+        // 小説を表示（フェードインアニメーション）
+        storyElement.textContent = data.story;
+        storySection.classList.remove('hidden');
+
+    } catch (error) {
+        loadingElement.classList.add('hidden');
+        showError(error.message || '小説の生成中にエラーが発生しました');
+    } finally {
+        generateBtn.disabled = false;
+    }
+});
+
+// エラー表示
+function showError(message) {
+    errorElement.textContent = message;
+    errorElement.classList.remove('hidden');
+
+    // 5秒後に自動で非表示
+    setTimeout(() => {
+        errorElement.classList.add('hidden');
+    }, 5000);
+}
+
+// コピー機能
+copyBtn.addEventListener('click', async () => {
+    try {
+        await navigator.clipboard.writeText(storyElement.textContent);
+
+        // フィードバック
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = '✓ コピーしました';
+        copyBtn.classList.add('copied');
+
+        setTimeout(() => {
+            copyBtn.textContent = originalText;
+            copyBtn.classList.remove('copied');
+        }, 2000);
+    } catch (error) {
+        showError('コピーに失敗しました');
+    }
+});
+
+// ページ読み込み時に初期化
+init();

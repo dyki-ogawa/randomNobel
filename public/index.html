@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>形容詞+名詞ランダム小説ジェネレーター</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ランダム小説ジェネレーター</h1>
+            <p class="subtitle">形容詞と名詞からAIが短編小説を生成します</p>
+        </header>
+
+        <main>
+            <section class="word-selection">
+                <div class="word-box">
+                    <label>形容詞</label>
+                    <div class="word-display">
+                        <span id="adjective" class="word">美しい</span>
+                        <button id="reroll-adjective" class="dice-btn" aria-label="形容詞を再抽選">🎲</button>
+                    </div>
+                </div>
+
+                <div class="word-box">
+                    <label>名詞</label>
+                    <div class="word-display">
+                        <span id="noun" class="word">洗濯機</span>
+                        <button id="reroll-noun" class="dice-btn" aria-label="名詞を再抽選">🎲</button>
+                    </div>
+                </div>
+            </section>
+
+            <button id="generate-btn" class="generate-btn">
+                この内容で小説を生成
+            </button>
+
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>小説を生成中...</p>
+            </div>
+
+            <section id="story-section" class="story-section hidden">
+                <div class="story-header">
+                    <h2>生成された小説</h2>
+                    <button id="copy-btn" class="copy-btn" aria-label="小説をコピー">📋 コピー</button>
+                </div>
+                <div id="story" class="story-content"></div>
+            </section>
+
+            <div id="error" class="error hidden"></div>
+        </main>
+
+        <footer>
+            <p>Powered by Claude AI</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
