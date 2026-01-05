@@ -81,8 +81,18 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok' });
 });
 
-// サーバー起動
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-    console.log('Press Ctrl+C to stop the server');
+// ルートパスでindex.htmlを返す
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+// ローカル開発用のサーバー起動
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+        console.log('Press Ctrl+C to stop the server');
+    });
+}
+
+// Vercel用のエクスポート
+module.exports = app;
