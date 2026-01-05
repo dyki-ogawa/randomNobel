@@ -17,7 +17,37 @@
 3. 「この内容で小説を生成」ボタンで小説を生成
 4. 生成された小説は📋ボタンでコピー可能
 
-## セットアップ
+## Vercelへのデプロイ（推奨）
+
+このアプリケーションは**Vercel**で簡単にデプロイできます。GitHub Pagesは静的サイト専用のため、バックエンドが必要な本アプリには対応していません。
+
+### デプロイ手順
+
+1. **Vercelアカウントを作成**
+   - [vercel.com](https://vercel.com) にアクセス
+   - GitHubアカウントでサインアップ
+
+2. **GitHubリポジトリと連携**
+   - Vercelダッシュボードから「New Project」をクリック
+   - このリポジトリを選択してインポート
+
+3. **環境変数を設定**
+   - プロジェクト設定で「Environment Variables」を選択
+   - 以下を追加:
+     ```
+     ANTHROPIC_API_KEY=your_api_key_here
+     ```
+
+4. **デプロイ**
+   - 「Deploy」ボタンをクリック
+   - 数分後、公開URLが発行されます
+
+5. **以降は自動デプロイ**
+   - mainブランチへのpushで自動的に再デプロイされます
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/randomNobel)
+
+## ローカルセットアップ
 
 ### 必要要件
 
@@ -70,7 +100,10 @@ randomNobel/
 ├── data/
 │   └── words.json      # 単語データ（形容詞・名詞）
 ├── server.js           # Expressサーバー
+├── vercel.json         # Vercel設定ファイル
 ├── package.json
+├── .env.example        # 環境変数のサンプル
+├── .gitignore
 └── README.md
 ```
 
