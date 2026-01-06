@@ -113,9 +113,14 @@ generateBtn.addEventListener('click', async () => {
         // ローディングを非表示
         loadingElement.classList.add('hidden');
 
+        // AIの出力からタイトルと本文を分離
+        const lines = data.story.split('\n');
+        const title = lines[0]; // 最初の行がタイトル
+        const body = lines.slice(1).join('\n').trim(); // 残りが本文
+
         // タイトルと小説を表示（フェードインアニメーション）
-        storyTitleElement.textContent = adjective + noun;
-        storyElement.textContent = data.story;
+        storyTitleElement.textContent = title;
+        storyElement.textContent = body;
         storySection.classList.remove('hidden');
 
     } catch (error) {
