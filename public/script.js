@@ -12,6 +12,7 @@ const rerollNounBtn = document.getElementById('reroll-noun');
 const generateBtn = document.getElementById('generate-btn');
 const loadingElement = document.getElementById('loading');
 const storySection = document.getElementById('story-section');
+const storyTitleElement = document.getElementById('story-title');
 const storyElement = document.getElementById('story');
 const errorElement = document.getElementById('error');
 const copyBtn = document.getElementById('copy-btn');
@@ -112,7 +113,8 @@ generateBtn.addEventListener('click', async () => {
         // ローディングを非表示
         loadingElement.classList.add('hidden');
 
-        // 小説を表示（フェードインアニメーション）
+        // タイトルと小説を表示（フェードインアニメーション）
+        storyTitleElement.textContent = adjective + noun;
         storyElement.textContent = data.story;
         storySection.classList.remove('hidden');
 
