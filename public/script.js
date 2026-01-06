@@ -38,7 +38,6 @@ function getRandomWord(array) {
 // スロットアニメーション
 async function slotAnimation(element, wordArray, duration = 1500) {
     const btn = element.closest('.word-display').querySelector('.dice-btn');
-    btn.classList.add('rolling');
     btn.disabled = true;
 
     const startTime = Date.now();
@@ -67,7 +66,6 @@ async function slotAnimation(element, wordArray, duration = 1500) {
             // 終了判定
             if (elapsed >= duration) {
                 clearInterval(interval);
-                btn.classList.remove('rolling');
                 btn.disabled = false;
                 resolve();
             }
