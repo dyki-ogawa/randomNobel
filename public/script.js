@@ -16,6 +16,7 @@ const storyTitleElement = document.getElementById('story-title');
 const storyElement = document.getElementById('story');
 const errorElement = document.getElementById('error');
 const copyBtn = document.getElementById('copy-btn');
+const downloadBtn = document.getElementById('download-btn');
 
 // 初期化
 async function init() {
@@ -158,6 +159,43 @@ copyBtn.addEventListener('click', async () => {
         }, 2000);
     } catch (error) {
         showError('コピーに失敗しました');
+    }
+});
+
+// ダウンロード機能
+downloadBtn.addEventListener('click', () => {
+    try {
+        // タイトルと本文を結合
+        const title = storyTitleElement.textContent;
+        const body = storyElement.textContent;
+        const fullText = `${title}\n\n${body}`;
+
+        // Blobを作成
+        const blob = new Blob([fullText], { type: 'text/plain;charset=utf-8' });
+
+        // ダウンロードリンクを作成
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${title}.txt`;
+
+        // ダウンロードを実行
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        // フィードバック
+        const originalText = downloadBtn.textContent;
+        downloadBtn.textContent = '✓ ダウンロード完了';
+        downloadBtn.classList.add('downloaded');
+
+        setTimeout(() => {
+            downloadBtn.textContent = originalText;
+            downloadBtn.classList.remove('downloaded');
+        }, 2000);
+    } catch (error) {
+        showError('ダウンロードに失敗しました');
     }
 });
 
