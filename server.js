@@ -75,22 +75,42 @@ app.post('/api/generate', async (req, res) => {
 ## 出力形式
 
 冒頭にタイトル「${adjective}${noun}」を記載し、その後に本文を続けてください。
-文字数は1500字程度。
+【重要】本文の文字数は必ず900〜1100字の範囲に収めること。過不足なく1000字前後になるよう調整すること。
 
 小説:`;
 
-        const message = await anthropic.messages.create({
-            model: 'claude-3-haiku-20240307',
-            max_tokens: 3000,
-            messages: [
-                {
-                    role: 'user',
-                    content: prompt
-                }
-            ]
-        });
+        const MIN_CHARS = 900;
+        const MAX_CHARS = 1100;
+        const MAX_RETRIES = 3;
 
-        const story = message.content[0].text;
+        let story = '';
+        let attempts = 0;
+
+        while (attempts < MAX_RETRIES) {
+            attempts++;
+            const message = await anthropic.messages.create({
+                model: 'claude-3-haiku-20240307',
+                max_tokens: 2000,
+                messages: [
+                    {
+                        role: 'user',
+                        content: prompt
+                    }
+                ]
+            });
+
+            story = message.content[0].text;
+            const charCount = story.length;
+            console.log(`生成試行 ${attempts}回目: ${charCount}文字`);
+
+            if (charCount >= MIN_CHARS && charCount <= MAX_CHARS) {
+                break;
+            }
+
+            if (attempts < MAX_RETRIES) {
+                console.log(`文字数が範囲外（${charCount}字）のため再生成します`);
+            }
+        }
 
         res.json({ story });
     } catch (error) {
