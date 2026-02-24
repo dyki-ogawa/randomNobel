@@ -156,7 +156,7 @@ generateBtn.addEventListener('click', async () => {
 
         // AIの出力からタイトルと本文を分離
         const lines = data.story.split('\n');
-        const title = lines[0]; // 最初の行がタイトル
+        const title = lines[0].replace(/[【】]/g, ''); // 最初の行がタイトル（【】を除去）
         const body = lines.slice(1).join('\n').trim(); // 残りが本文
 
         // タイトルと小説を表示（フェードインアニメーション）
