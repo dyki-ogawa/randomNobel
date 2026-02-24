@@ -37,8 +37,48 @@ function getRandomWord(array) {
     return array[Math.floor(Math.random() * array.length)];
 }
 
+// クリックで単語を編集可能にする
+function makeEditable(element) {
+    element.contentEditable = 'true';
+    element.classList.add('editing');
+    element.focus();
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+}
+
+function stopEditing(element, fallbackArray) {
+    element.contentEditable = 'false';
+    element.classList.remove('editing');
+    if (!element.textContent.trim()) {
+        element.textContent = getRandomWord(fallbackArray);
+    }
+}
+
+adjectiveElement.addEventListener('click', () => makeEditable(adjectiveElement));
+adjectiveElement.addEventListener('blur', () => stopEditing(adjectiveElement, wordsData.adjectives));
+adjectiveElement.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        stopEditing(adjectiveElement, wordsData.adjectives);
+    }
+});
+
+nounElement.addEventListener('click', () => makeEditable(nounElement));
+nounElement.addEventListener('blur', () => stopEditing(nounElement, wordsData.nouns));
+nounElement.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        stopEditing(nounElement, wordsData.nouns);
+    }
+});
+
 // スロットアニメーション
 async function slotAnimation(element, wordArray, duration = 1500) {
+    element.contentEditable = 'false';
+    element.classList.remove('editing');
     const btn = element.closest('.word-display').querySelector('.dice-btn');
     btn.disabled = true;
 

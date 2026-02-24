@@ -84,6 +84,19 @@ main {
     font-weight: 400;
     color: #1a1a1a;
     flex: 1;
+    cursor: pointer;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s ease;
+    outline: none;
+}
+
+.word:hover {
+    border-bottom-color: #aaa;
+}
+
+.word.editing {
+    cursor: text;
+    border-bottom: 2px solid #1a1a1a;
 }
 
 .dice-btn {
